@@ -91,13 +91,39 @@ def find_stop(stop_regex, sequence, start):
 def has_shine_dalgarno(shine_regex, sequence, start, max_shine_dalgarno_distance):
     """Find a shine dalgarno motif before the start codon
     """
-    pass
+    Shine_Dalagarno = shine_regex.search(sequence, start - max_shine_dalgarno_distance)
+    if Shine_Dalagarno:
+        if Shine_Dalagarno.end(0) < start - 6:
+            return True
+    return False
+
 
 def predict_genes(sequence, start_regex, stop_regex, shine_regex, 
                   min_gene_len, max_shine_dalgarno_distance, min_gap):
     """Predict most probable genes
     """
-    pass
+    position_courante = 0
+    gene_pred = []
+    
+    while len(sequence) - position_courante >= min_gap:
+        position_courante = find_start(start_regex, sequence, position_courante, len(sequence))
+        if position_courante is not None:
+            stop = find_stop(stop_regex, sequence, position_courante)
+            if stop is not None:
+                gen_len = stop - position_courante
+                if gen_len >= min_gene_len:
+                    Shine_Dalagarno = has_shine_dalgarno(shine_regex, sequence, position_courante, max_shine_dalgarno_distance)
+                    if Shine_Dalagarno:
+                        gene_pred.append([position_courante + 1, stop + 3])
+                        position_courante = stop + 2 + min_gap
+                    else:
+                        position_courante += 1
+                else:
+                    position_courante += 1
+            else:
+                position_courante += 1
+    return gene_pred
+
 
 
 def write_genes_pos(predicted_genes_file, probable_genes):
