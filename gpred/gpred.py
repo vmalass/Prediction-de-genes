@@ -104,12 +104,12 @@ def predict_genes(sequence, start_regex, stop_regex, shine_regex,
     """
     position_courante = 0
     gene_pred = []
-    
+
     while len(sequence) - position_courante >= min_gap:
         position_courante = find_start(start_regex, sequence, position_courante, len(sequence))
-        if position_courante is not None:
+        if position_courante:
             stop = find_stop(stop_regex, sequence, position_courante)
-            if stop is not None:
+            if stop:
                 gen_len = stop - position_courante
                 if gen_len >= min_gene_len:
                     Shine_Dalagarno = has_shine_dalgarno(shine_regex, sequence, position_courante, max_shine_dalgarno_distance)
