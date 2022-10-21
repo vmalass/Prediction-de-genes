@@ -81,7 +81,12 @@ def find_start(start_regex, sequence, start, stop):
 def find_stop(stop_regex, sequence, start):
     """Find the stop codon
     """
-    pass
+    research_stop = stop_regex.finditer(sequence, start)
+    for match in research_stop:
+        if match:
+            stop = match.start(0)
+            if (stop-start) % 3 == 0:
+                return stop
 
 def has_shine_dalgarno(shine_regex, sequence, start, max_shine_dalgarno_distance):
     """Find a shine dalgarno motif before the start codon
